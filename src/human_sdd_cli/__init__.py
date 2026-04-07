@@ -558,11 +558,14 @@ def init(
     if ai == "copilot":
         next_steps.add_row("1.", "Open the project in VS Code")
         next_steps.add_row("2.", "Open Copilot Chat")
-        next_steps.add_row("3.", "Type: /hsdd.specify Add user authentication with email")
-        next_steps.add_row("4.", "Follow the workflow: specify -> plan -> tasks -> YOU CODE -> review")
+        next_steps.add_row("3.", "Type: /hsdd.vision to define your product vision")
+        next_steps.add_row("4.", "Type: /hsdd.roadmap to define your feature roadmap")
+        next_steps.add_row("5.", "For each feature: specify -> clarify -> plan -> tasks -> YOU CODE -> review")
     else:
         next_steps.add_row("1.", "Review .hsdd/memory/constitution.md")
-        next_steps.add_row("2.", "Start with: hsdd specify --idea 'your feature idea'")
+        next_steps.add_row("2.", "Run: hsdd vision --description 'your product idea'")
+        next_steps.add_row("3.", "Run: hsdd roadmap")
+        next_steps.add_row("4.", "For each feature: hsdd specify -> clarify -> plan -> tasks -> YOU CODE -> review")
 
     console.print(Panel(
         next_steps,

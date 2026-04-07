@@ -101,6 +101,92 @@ class TestCheckNoCodeCommand:
             assert "FAILED" in result.output
 
 
+class TestProductVisionCommand:
+    def test_vision_no_ai(self):
+        runner = CliRunner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Init first (create .hsdd structure)
+            root = Path(tmpdir)
+            hsdd_dir = root / ".hsdd" / "memory"
+            hsdd_dir.mkdir(parents=True)
+            (hsdd_dir / "constitution.md").write_text("# Constitution\n")
+            # Run vision
+            result = runner.invoke(cli, [
+                "vision",
+                "--description", "A tool for managing recipes",
+                "--path", tmpdir,
+                "--no-ai",
+            ])
+            assert result.exit_code == 0
+            vision_path = hsdd_dir / "product-vision.md"
+            assert vision_path.exists()
+            content = vision_path.read_text()
+            assert "Product Vision" in content
+            assert "A tool for managing recipes" in content
+
+    def test_vision_requires_hsdd_dir(self):
+        runner = CliRunner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = runner.invoke(cli, [
+                "vision",
+                "--description", "Some product",
+                "--path", tmpdir,
+                "--no-ai",
+            ])
+            assert result.exit_code != 0
+
+
+class TestFeatureRoadmapCommand:
+    def test_roadmap_no_ai(self):
+        runner = CliRunner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            hsdd_dir = root / ".hsdd" / "memory"
+            hsdd_dir.mkdir(parents=True)
+            (hsdd_dir / "constitution.md").write_text("# Constitution\n")
+            # Create a product vision first
+            (hsdd_dir / "product-vision.md").write_text("# Product Vision\n\nA recipe manager\n")
+            # Run roadmap
+            result = runner.invoke(cli, [
+                "roadmap",
+                "--path", tmpdir,
+                "--no-ai",
+            ])
+            assert result.exit_code == 0
+            roadmap_path = hsdd_dir / "feature-roadmap.md"
+            assert roadmap_path.exists()
+            content = roadmap_path.read_text()
+            assert "Feature Roadmap" in content
+            assert "FEAT-001" in content
+
+    def test_roadmap_requires_hsdd_dir(self):
+        runner = CliRunner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = runner.invoke(cli, [
+                "roadmap",
+                "--path", tmpdir,
+                "--no-ai",
+            ])
+            assert result.exit_code != 0
+
+    def test_roadmap_with_description(self):
+        runner = CliRunner()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            root = Path(tmpdir)
+            hsdd_dir = root / ".hsdd" / "memory"
+            hsdd_dir.mkdir(parents=True)
+            (hsdd_dir / "constitution.md").write_text("# Constitution\n")
+            result = runner.invoke(cli, [
+                "roadmap",
+                "--description", "Build a recipe sharing platform",
+                "--path", tmpdir,
+                "--no-ai",
+            ])
+            assert result.exit_code == 0
+            roadmap_path = hsdd_dir / "feature-roadmap.md"
+            assert roadmap_path.exists()
+
+
 class TestTraceCommand:
     def test_trace_report(self):
         runner = CliRunner()

@@ -45,6 +45,8 @@ Open the project in VS Code and use Copilot Chat with these commands:
 
 | Command | What it does |
 |---------|-------------|
+| `/hsdd.vision` | Define the product vision -- what it is, who it's for, why it matters |
+| `/hsdd.roadmap` | Define ALL features needed to realize the product vision |
 | `/hsdd.specify` | Create a feature specification from a natural language description |
 | `/hsdd.plan` | Generate a technical planning package (prose only, no code) |
 | `/hsdd.tasks` | Create a human execution checklist |
@@ -57,15 +59,19 @@ Open the project in VS Code and use Copilot Chat with these commands:
 ### 3. The Workflow
 
 ```
-  /hsdd.specify ──> /hsdd.plan ──> /hsdd.tasks ──> YOU CODE ──> /hsdd.review ──> /hsdd.trace
+  /hsdd.vision ──> /hsdd.roadmap ──> For EACH feature:
+      /hsdd.specify ──> /hsdd.clarify ──> /hsdd.plan ──> /hsdd.tasks ──> YOU CODE ──> /hsdd.review
 ```
 
-1. **Specify**: Describe your feature in natural language. AI creates a structured spec.
-2. **Plan**: AI generates research, data models, contracts -- all in prose, no code.
-3. **Tasks**: AI creates a sequenced, traceable checklist for you.
-4. **You Code**: Write every line yourself. That's the point.
-5. **Review**: AI compares your implementation against the spec. Produces follow-up tasks, not patches.
-6. **Trace**: Verify every requirement has corresponding tasks and implementation.
+1. **Vision**: Define the product vision -- what it is, who it's for, and why.
+2. **Roadmap**: Define ALL features needed to build the product.
+3. **For each feature from the roadmap:**
+   1. **Specify**: Describe the feature. AI creates a structured spec.
+   2. **Clarify**: AI finds ambiguity and contradictions in the spec.
+   3. **Plan**: AI generates research, data models, contracts -- all in prose, no code.
+   4. **Tasks**: AI creates a sequenced, traceable checklist for you.
+   5. **You Code**: Write every line yourself. That's the point.
+   6. **Review**: AI compares your implementation against the spec. Produces follow-up tasks, not patches.
 
 ## Project Structure
 
@@ -75,7 +81,9 @@ After `hsdd init`, your project looks like:
 my-project/
 ├── .hsdd/
 │   ├── memory/
-│   │   └── constitution.md          # The 8 Articles
+│   │   ├── constitution.md          # The 8 Articles
+│   │   ├── product-vision.md        # Product vision document
+│   │   └── feature-roadmap.md       # Feature roadmap
 │   ├── templates/
 │   │   ├── spec-template.md
 │   │   ├── plan-template.md
@@ -91,6 +99,8 @@ my-project/
 │   └── init-options.json
 ├── .github/
 │   ├── agents/
+│   │   ├── hsdd.vision.agent.md
+│   │   ├── hsdd.roadmap.agent.md
 │   │   ├── hsdd.specify.agent.md
 │   │   ├── hsdd.plan.agent.md
 │   │   ├── hsdd.tasks.agent.md
@@ -137,6 +147,15 @@ Every project gets a constitution with 8 non-negotiable articles:
 ```bash
 hsdd init <project-name>   # Initialize a new project
 hsdd init --here            # Initialize in current directory
+hsdd vision                 # Define the product vision
+hsdd roadmap                # Define the feature roadmap
+hsdd specify                # Create a feature specification
+hsdd clarify                # Analyze specs for ambiguity
+hsdd plan                   # Generate a technical plan
+hsdd tasks                  # Create a human execution checklist
+hsdd review                 # Review implementation against spec
+hsdd trace                  # Map requirements to tasks
+hsdd check-no-code          # Validate no AI code in artifacts
 hsdd integrate copilot      # Re-run Copilot integration
 hsdd check                  # Verify project setup
 hsdd version                # Show version
