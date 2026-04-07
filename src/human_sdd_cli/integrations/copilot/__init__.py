@@ -233,10 +233,28 @@ through requirements, identify ambiguity, structure plans, and review work.
 - Task breakdowns with requirement traceability
 - Review reports and gap analyses
 
+## Workflow
+
+The recommended workflow is:
+
+1. `/hsdd.constitution` -- Define project principles (done during init)
+2. `/hsdd.vision` -- Define the product vision
+3. `/hsdd.roadmap` -- Define ALL features needed to realize the product
+4. For EACH feature from the roadmap:
+   - `/hsdd.specify` -- Create a feature specification
+   - `/hsdd.clarify` -- Find ambiguity and contradictions
+   - `/hsdd.plan` -- Generate a technical planning package
+   - `/hsdd.tasks` -- Create a human execution checklist
+   - YOU CODE the feature
+   - `/hsdd.review` -- Compare implementation against spec
+   - `/hsdd.trace` -- Map requirements to tasks
+
 ## Available Commands
 
 Use these commands in Copilot Chat:
 
+- `/hsdd.vision` -- Define the product vision (what, who, why)
+- `/hsdd.roadmap` -- Define ALL features needed to realize the product
 - `/hsdd.specify` -- Create a feature specification from a natural language description
 - `/hsdd.plan` -- Generate a technical planning package (prose only)
 - `/hsdd.tasks` -- Create a human execution checklist
@@ -249,6 +267,8 @@ Use these commands in Copilot Chat:
 ## Project Structure
 
 - `.hsdd/memory/constitution.md` -- Project constitution (8 articles)
+- `.hsdd/memory/product-vision.md` -- Product vision document
+- `.hsdd/memory/feature-roadmap.md` -- Feature roadmap
 - `.hsdd/templates/` -- Markdown templates for specs, plans, tasks, etc.
 - `specs/` -- Feature specifications and planning artifacts
 - `.github/agents/` -- Copilot agent command files
