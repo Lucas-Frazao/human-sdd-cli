@@ -451,6 +451,26 @@ def init_git_repo(project_path: Path, quiet: bool = False) -> Tuple[bool, Option
         os.chdir(original_cwd)
 
 
+def _stage_csdd_files(project_path: Path) -> None:
+    """Stage .csdd/, .github/, and .vscode/ files in an existing git repo.
+
+    When ``csdd init --here`` runs inside an existing repo, the integration
+    step creates new files that would otherwise remain untracked.  This
+    function stages them so the user sees them in ``git status`` and won't
+    accidentally forget to commit.
+    """
+    paths_to_stage = [".csdd", ".github", ".vscode", "specs"]
+    try:
+        subprocess.run(
+            ["git", "add", "--"] + paths_to_stage,
+            check=True,
+            capture_output=True,
+            cwd=project_path,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass  # Best-effort; don't fail init if staging fails
+
+
 def _save_init_options(project_path: Path, options: dict) -> None:
     """Persist init CLI options in .csdd/init-options.json."""
     init_options_path = project_path / ".csdd" / "init-options.json"
@@ -535,7 +555,9 @@ def init(
         if not no_git:
             tracker.start("git", "Initializing repository")
             if is_git_repo(project_path):
-                tracker.complete("git", "Already a git repo")
+                # Stage newly created files so they aren't forgotten
+                _stage_csdd_files(project_path)
+                tracker.complete("git", "Already a git repo (new files staged)")
             else:
                 success, error = init_git_repo(project_path, quiet=True)
                 if success:
@@ -598,10 +620,15 @@ def integrate(
 
         integration = CopilotIntegration()
         created = integration.setup(project_path)
+        # Stage new files so they aren't forgotten
+        if is_git_repo(project_path):
+            _stage_csdd_files(project_path)
         console.print(f"[green]Copilot integration complete.[/green] {len(created)} files created/updated.")
         for f in created:
             rel = f.relative_to(project_path)
             console.print(f"  [dim]{rel}[/dim]")
+        console.print()
+        console.print("[dim]New files have been staged. Run 'git commit' to save them.[/dim]")
     else:
         console.print(f"[red]Unknown AI assistant: {ai}[/red]")
         raise typer.Exit(1)
